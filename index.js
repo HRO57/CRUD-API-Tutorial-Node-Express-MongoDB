@@ -16,7 +16,9 @@ app.listen(3000, () => {
 
 // ----------------routes-----------------------
 app.get('/', function (req, res) { // 3. Add Routes
-    res.send('Hello World from express application')
+    res.send(
+        'Hello World from express application'
+    )
 }) // 3. Add Routes 
 
 
@@ -29,6 +31,18 @@ app.get('/api/products', async (req, res) => {  // 3. Add Routes to get all prod
         res.status(200).json(products); // 5. Send Product Response
     } catch (error) {
         res.status(500).json({ message: error.message }); // 6. Send Error
+    }
+})
+
+
+// ----------------get single product by id-----------------------
+app.get('/api/product/:id', async (req, res) => {  // 3. Add Routes to get all products 
+    try {
+        const { id } = req.params;
+        const product = await Product.findById(id); // 4. Find Product from DB by ID 
+        res.status(200).json(product); // 5. Send Product Response
+    } catch (error) {
+        res.status(500).json({ message: error.message }); // 6. Send Error 
     }
 })
 
@@ -47,7 +61,31 @@ app.post('/api/products', async (req, res) => {    // 4. Add Product into DB //c
     // res.send(req.body);
 })
 
+// ----------------end add product-----------------------
 
+
+// ----------------update product-----------------------
+
+
+app.put('/api/product/id: ', async (req, res) => {
+
+    try {
+        const { id } = req.params;
+
+        const product = await Product.findByIdAndUpdate(id, req.body); // 3. Find Product from DB by ID for update data from request 
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+        const UpdatedProduct = await Product.findById(id); // 4. Find Product from DB by ID before update to check updated data
+
+        res.status(200).json(UpdatedProduct);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// ----------------end update product-----------------------
 
 
 // ----------------connect to DB-----------------------
@@ -58,5 +96,5 @@ mongoose.connect("mongodb://localhost:27017/pulok_db")
     })
     .catch((e) => {
         console.log("connected error", e);
-    }); 
+    });
 
